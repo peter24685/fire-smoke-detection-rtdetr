@@ -1,10 +1,10 @@
-# 运行验证
+# Verification Notes
 
-检查日期：2026-11-02。
+Checked on: 2026-11-02.
 
-- 配置测试 3 项通过：缺失数据目录、含空格路径与类别顺序、默认使用验证集。
-- 本地环境：Python 3.10.20、PyTorch 2.7.1+cu118、Ultralytics 8.4.55。
-- 使用历史 test_run-3/best.pt 对本地验证集 AoF04076.jpg 完成 CPU 单图预测，输出图像已保存，程序正常结束。
-- 此次单图在 conf=0.25 下输出 6 个检测框（3 smoke、3 fire）。此结果仅验证推理流程可运行，不代表 6 个检测都正确，也不是完整数据集评测。
-- 没有重新训练，也没有运行完整测试集评估。CI 工作流已添加，远端执行状态需以 GitHub Actions 为准。
-- 数据图片及自训练权重保留在本机，不属于本次公开发布文件。
+- Three configuration tests passed: missing dataset directories, paths containing spaces and class ordering, and validation as the default evaluation split.
+- Local environment: Python 3.10.20, PyTorch 2.7.1+cu118, and Ultralytics 8.4.55.
+- Single-image CPU inference completed successfully on the local validation image AoF04076.jpg using the historical test_run-3/best.pt checkpoint. The annotated output was saved.
+- At conf=0.25, this image produced six detection boxes: three smoke and three fire. This confirms that the inference pipeline runs; it does not establish that all six detections are correct and is not a full dataset evaluation.
+- No retraining or full test-set evaluation was performed. A CI workflow is included; consult GitHub Actions for its remote execution status.
+- Dataset images and custom trained weights remain local and are not included in the public repository.
