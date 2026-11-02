@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env*
+datasets/
+weights/
+runs/
+*.pt
+*.onnx
+*.engine
+configs/local.yaml
+.DS_Store
