@@ -1,4 +1,4 @@
-"""RT-DETR 火焰烟雾检测：可移植的训练、验证与预测入口。"""
+"""RT-DETR fire and smoke detection: a portable CLI for training, validation, and inference."""
 import argparse
 import json
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
-    prepare = sub.add_parser('prepare', help='生成本机数据配置，不修改标签')
+    prepare = sub.add_parser('prepare', help='Generate a local dataset configuration without changing labels')
     prepare.add_argument('--root', type=Path, required=True)
     prepare.add_argument('--output', type=Path, default=Path('configs/local.yaml'))
     for name in ('train', 'val', 'predict'):
@@ -37,9 +37,9 @@ def prepare(root, output):
     missing = [str(root / s / k) for s in ('train', 'val', 'test')
                for k in ('images', 'labels') if not (root / s / k).is_dir()]
     if missing:
-        raise ValueError('缺少数据目录：' + ', '.join(missing))
+        raise ValueError('Missing dataset directories: ' + ', '.join(missing))
     output.parent.mkdir(parents=True, exist_ok=True)
-    # JSON 字符串也是合法 YAML 字符串，可安全保存含空格的 Windows 路径。
+    # JSON strings are valid YAML strings and safely represent Windows paths with spaces.
     output.write_text('path: ' + json.dumps(root.as_posix(), ensure_ascii=False)
                       + '\ntrain: train/images\nval: val/images\ntest: test/images\n'
                         'names:\n  0: smoke\n  1: fire\n', encoding='utf-8')
@@ -56,18 +56,18 @@ def main():
             parser.error(str(error))
         return
     if args.imgsz <= 0 or (hasattr(args, 'batch') and args.batch <= 0):
-        parser.error('imgsz 和 batch 必须为正数')
+        parser.error('imgsz and batch must be positive')
     if args.command == 'train' and args.epochs <= 0:
-        parser.error('epochs 必须为正数')
+        parser.error('epochs must be positive')
     if args.command == 'predict' and not 0 <= args.conf <= 1:
-        parser.error('conf 必须在 0 到 1 之间')
+        parser.error('conf must be between 0 and 1')
     if args.command != 'predict' and not args.data.is_file():
-        parser.error('找不到数据配置，请先运行 prepare')
-    # 只允许训练入口使用框架下载预训练模型；预测需提供实际训练权重。
+        parser.error('Dataset configuration not found; run prepare first')
+    # Only training may download pretrained weights; inference requires a local trained checkpoint.
     if args.command != 'train' and not Path(args.weights).is_file():
-        parser.error('找不到训练权重，请提供本地 best.pt 路径')
+        parser.error('Trained weights not found; provide a local best.pt path')
     if args.command == 'predict' and not Path(args.source).exists():
-        parser.error('找不到输入图片或目录')
+        parser.error('Input image or directory not found')
     from ultralytics import RTDETR
     model = RTDETR(args.weights)
     common = dict(imgsz=args.imgsz, device=args.device,
