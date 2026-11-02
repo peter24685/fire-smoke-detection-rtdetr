@@ -1,17 +1,17 @@
-# 实验记录
+# Experiment Notes
 
-本地数据目录统计：训练集 14,122 张，验证集 3,099 张，测试集 4,306 张；各自标签文件数量与图片数量一致。计数不代表全部标注均正确，数据划分尚未进行重复图像与跨集合泄漏检查。
+The local dataset contains 14,122 training images, 3,099 validation images, and 4,306 test images. Each split has the same number of label files as images. Matching counts do not establish annotation correctness. Duplicate-image and cross-split leakage checks have not yet been performed.
 
-## 保留记录
+## Preserved Records
 
-`reports/test_run-3.csv` 和 `reports/test_run-4.csv` 是原始训练 CSV 的逐字节副本。均只有一行 epoch 记录。原预测脚本使用 test_run-3 的 best.pt，因此不能将 test_run-4 的指标描述成该权重的成绩。
+`reports/test_run-3.csv` and `reports/test_run-4.csv` are byte-for-byte copies of the original training CSV files. Each contains a single epoch row. The original prediction script used the best.pt checkpoint from test_run-3, so test_run-4 metrics must not be attributed to that checkpoint.
 
-共同设置：RT-DETR-L、epochs=1、imgsz=640、batch=2、workers=0、device=0、seed=0、pretrained=True、optimizer=auto。原 args.yaml 含本机路径，公开仓库只列与实验有关的设置。原始数据配置和权重保留在本机。
+Shared settings: RT-DETR-L, epochs=1, imgsz=640, batch=2, workers=0, device=0, seed=0, pretrained=True, optimizer=auto. The original args.yaml files contain machine-specific paths; only relevant experiment settings are documented publicly. Original dataset configurations and weights remain local.
 
-## 类别配置问题
+## Class Mapping Discrepancy
 
-发现旧目录有两份 YAML：一份为 `0=fire、1=smoke`，实际训练脚本使用另一份 `0=smoke、1=fire`。发布版本沿用实际训练配置；抽查 AoF03796 的类别 0 与烟雾、AoF04076 的类别 1 与火焰相符。抽查不能替代完整标注审计。
+Two YAML configurations were found in the original project: one used `0=fire, 1=smoke`, while the configuration actually used by the training script specified `0=smoke, 1=fire`. The published CLI follows the training configuration. Spot checks found class 0 consistent with smoke in AoF03796 and class 1 consistent with fire in AoF04076. These checks do not replace a complete annotation audit.
 
-## 可解释范围
+## Interpretation Limits
 
-这里只能证明训练流程已运行并产生权重与验证结果。不同运行的差异不能直接归因为算法改进；没有可靠计时协议，不报告 FPS；没有新测试集评估，不报告测试集准确率。
+These records demonstrate that the training pipeline ran and produced checkpoints and validation results. Differences between runs cannot be directly attributed to algorithmic improvements. FPS is not reported because no reliable timing protocol was used. Test-set accuracy is not reported because no new test-set evaluation was performed.
